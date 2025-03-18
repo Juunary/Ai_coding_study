@@ -48,8 +48,10 @@ COPY requirements.txt ${ROOT_PROJECT}
 RUN cd ${ROOT_PROJECT} && \
     pip install -r requirements.txt
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
-
 WORKDIR ${ROOT_POINT2CAD}
+
+# ✅ gosu 및 entrypoint 제거
+# ENTRYPOINT ["/entrypoint.sh"]
+    
+# ✅ 컨테이너 실행 시 point2cad.main 바로 실행
+CMD ["python", "-m", "point2cad.main"]
