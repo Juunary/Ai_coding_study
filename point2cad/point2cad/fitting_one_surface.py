@@ -115,9 +115,10 @@ def process_one_surface(label, points, labels, cfg, device):
             "plane", in_points, recon_basic_shapes, device=device
         )
         pred_mesh.triangle_normals = o3d.utility.Vector3dVector([])
-        o3d.io.write_triangle_mesh("tmp.obj", pred_mesh)
-        pred_mesh = pv.read("tmp.obj")
-        os.remove("tmp.obj")
+        tmp_obj_path = f"tmp_{label}.obj"
+        o3d.io.write_triangle_mesh(tmp_obj_path, pred_mesh)
+        pred_mesh = pv.read(tmp_obj_path)
+        os.remove(tmp_obj_path)
         pred_info["type"] = "plane"
         pred_info["params"] = recon_basic_shapes["plane_params"]
         pred_info["err"] = plane_err
