@@ -34,8 +34,9 @@ def visualize(title, path):
     fig.show()
 
 # Point2CAD 결과 파일 경로 (본인 폴더 맞춰서 수정!)
-unclipped_path = "C:\Users\user\Documents\GitHub\Ai_coding_study\point2cad\out\unclipped\mesh.ply"
-clipped_path = "C:\Users\user\Documents\GitHub\Ai_coding_study\point2cad\out\clipped\mesh.ply"
+unclipped_path = "C:/Users/user/Documents/GitHub/Ai_coding_study/point2cad/out/unclipped/mesh.ply"
+
+clipped_path = "C:/Users/user/Documents/GitHub/Ai_coding_study/point2cad/out/clipped/mesh.ply"
 
 # 시각화 실행
 visualize("Unclipped Surface", unclipped_path)
