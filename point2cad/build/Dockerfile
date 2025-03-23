@@ -24,8 +24,8 @@ RUN conda install python=3.7 && \
     pip3 install --upgrade pip
 
 ENV ROOT_PROJECT=/work
-ENV ROOT_PYMESH=${ROOT_PROJECT}/PyMesh
-ENV ROOT_POINT2CAD=${ROOT_PROJECT}/point2cad
+ENV ROOT_PYMESH ${ROOT_PROJECT}/PyMesh
+ENV ROOT_POINT2CAD ${ROOT_PROJECT}/point2cad
 RUN mkdir -p ${ROOT_PYMESH} && \
     mkdir -p ${ROOT_POINT2CAD}
 
@@ -44,14 +44,11 @@ RUN cd ${ROOT_PYMESH} && \
     python -c "import pymesh; pymesh.test()"
 
 WORKDIR ${ROOT_PROJECT}
-COPY point2cad/build/requirements.txt ${ROOT_PROJECT}
+COPY requirements.txt ${ROOT_PROJECT}
 RUN cd ${ROOT_PROJECT} && \
-    pip install -r requirements.txt && \
-    pip install lapsolver open3d scikit-learn
+    pip install -r requirements.txt
 
-COPY point2cad/point2cad/src /work/point2cad/point2cad/src
-COPY point2cad/point2cad/*.py /work/point2cad/point2cad/   
-COPY point2cad/build/entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 

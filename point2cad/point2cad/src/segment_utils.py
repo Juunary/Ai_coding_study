@@ -372,3 +372,19 @@ def relaxed_iou_fast(pred, gt, max_clusters=50):
         cost.append(r_iou)
     cost = torch.stack(cost, 0)
     return cost
+
+def rotation_matrix_a_to_b(a, b):
+    """
+    Computes the rotation matrix that aligns vector a to vector b
+    """
+    a = a / np.linalg.norm(a)
+    b = b / np.linalg.norm(b)
+    v = np.cross(a, b)
+    c = np.dot(a, b)
+    s = np.linalg.norm(v)
+    if s == 0:
+        return np.eye(3)
+    kmat = np.array([[0, -v[2], v[1]],
+                     [v[2], 0, -v[0]],
+                     [-v[1], v[0], 0]])
+    return np.eye(3) + kmat + kmat @ kmat * ((1 - c) / (s ** 2))

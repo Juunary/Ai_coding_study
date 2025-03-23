@@ -1,3 +1,4 @@
+import torch
 import argparse
 import numpy as np
 from src.PointNet import PrimitivesEmbeddingDGCNGn
@@ -65,8 +66,9 @@ if __name__ == "__main__":
     model.to(device)
     model.eval()
     model.load_state_dict(
-        torch.load(pth_path)
+        torch.load(pth_path, map_location=device)
     )
+
 
     iterations = 50
     quantile = 0.015
