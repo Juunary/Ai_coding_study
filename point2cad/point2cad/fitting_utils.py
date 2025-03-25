@@ -20,27 +20,25 @@ class LeastSquares:
         """
         cols = A.shape[1]
         if np.isinf(A.data.cpu().numpy()).any():
-            raise RuntimeException("Infinity in least squares")
+            raise RuntimeError("Infinity in least squares")
 
         # Assuming A to be full column rank
         if cols == torch.linalg.matrix_rank(A):
-            # Full column rank
             q, r = torch.linalg.qr(A)
             x = torch.inverse(r) @ q.transpose(1, 0) @ Y
         else:
-            # rank(A) < n, do regularized least square.
             AtA = A.transpose(1, 0) @ A
-
-            # get the smallest lambda that suits our purpose, so that error in
-            # results minimized.
             with torch.no_grad():
                 lamb = best_lambda(AtA)
-            A_dash = AtA + lamb * torch.eye(cols, device=A.get_device())
-            Y_dash = A.transpose(1, 0) @ Y
 
-            # if it still doesn't work, just set the lamb to be very high value.
+            # ✅ 여기가 핵심 수정 포인트
+            device = AtA.device if AtA.is_cuda else 'cpu'
+            A_dash = AtA + lamb * torch.eye(cols, device=device)
+
+            Y_dash = A.transpose(1, 0) @ Y
             x = self.lstsq(A_dash, Y_dash, 1)
         return x
+
 
 
 def best_lambda(A):
@@ -52,15 +50,18 @@ def best_lambda(A):
     lamb = 1e-6
     cols = A.shape[0]
 
+    
+    device = A.device if A.is_cuda else 'cpu'
+
     for i in range(7):
-        A_dash = A + lamb * torch.eye(cols, device=A.get_device())
+        A_dash = A + lamb * torch.eye(cols, device=device)
         if cols == torch.linalg.matrix_rank(A_dash):
             # we achieved the required rank
             break
         else:
-            # factor by which to increase the lambda. Choosing 10 for performance.
-            lamb *= 10
+            lamb *= 10  # Increase lambda by factor of 10 for performance
     return lamb
+
 
 
 def up_sample_points_torch_memory_efficient(points, times=1):
