@@ -34,10 +34,18 @@ def visualize(title, path):
     fig.show()
 
 # Point2CAD 결과 파일 경로 (본인 폴더 맞춰서 수정!)
-unclipped_path = "C:/Users/user/Documents/GitHub/Ai_coding_study/point2cad/out_Data/unclipped/mesh_471.ply"
+unclipped_path = "C:/Users/user/Documents/GitHub/Ai_coding_study/point2cad/out_Data/unclipped/mesh_cube.ply"
 
-clipped_path = "C:/Users/user/Documents/GitHub/Ai_coding_study/point2cad/out_Data/clipped/mesh_471.ply"
+clipped_path = "C:/Users/user/Documents/GitHub/Ai_coding_study/point2cad/out_Data/clipped/mesh_cube.ply"
+
+befor_path = "C:/Users/user/Documents/GitHub/Ai_coding_study/point2cad/out_Data/mesh_mona.ply"
+
+fix_path = "C:/Users/user/Documents/GitHub/Ai_coding_study/point2cad/out/prior_based_mesh.ply"
+
+
 
 # 시각화 실행
 visualize("Unclipped Surface", unclipped_path)
 visualize("Clipped Surface", clipped_path)
+visualize("Before", befor_path)
+visualize("A", fix_path)
