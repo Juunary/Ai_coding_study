@@ -4,20 +4,16 @@ import os
 import pyvista as pv
 import torch
 import warnings
+import sys
 from tqdm import tqdm
-
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 from dependencies.geomfitty.geomfitty._util import distance_line_point
 from point2cad.fitting_utils import project_to_plane, visualize_basic_mesh
 from point2cad.layers import PositionalEncoding, ResBlock, SirenLayer, SirenWithResblock
 from point2cad.primitive_forward import Fit
 from point2cad.utils import get_rng
 from point2cad.utils import sample_inr_mesh
-from point2cad.learned_models import MLPPlanePredictor
 
-
-#mlp_model = MLPPlanePredictor()
-#mlp_model.load_state_dict(torch.load("mlp_plane_predictor.pth", map_location="cpu"))
-#mlp_model.eval()
 
 
 def process_one_surface(label, points, labels, cfg, device):
@@ -25,7 +21,7 @@ def process_one_surface(label, points, labels, cfg, device):
     if len(in_points) < 20:
         return None
 
-    in_points = torch.from_numpy(in_points).to(device)
+    in_points = torch.from_numpy(in_points).float().to(device)
 
     # ========================= fitting basic primitives =======================
     recon_basic_shapes = fit_basic_primitives(in_points)
@@ -192,9 +188,10 @@ def process_one_surface(label, points, labels, cfg, device):
     return out
 
 
-def fit_basic_primitives(pts, use_learned_prior=False):
+def fit_basic_primitives(pts):
     """
     output: a dict of reconstructed points of each fitting shape, residual error
+
     """
     if pts.shape[0] < 20:
         raise ValueError("the number of points in the patch is too small")
@@ -203,64 +200,27 @@ def fit_basic_primitives(pts, use_learned_prior=False):
     recon_basic_shapes = {}
 
     # ==================fit a plane=========================
-    if use_learned_prior and pts.shape[0] >= 1000:
-        print("✅ Using MLP-based plane fitting")
-        # 1. 1000개 샘플 & 정규화
+    axis, distance = fitting.fit_plane_torch(
+        points=pts,
+        normals=None,
+        weights=torch.ones_like(pts)[:, :1],
+        ids=None,
+    )
+    # Project points on the surface
+    new_points = project_to_plane(pts, axis, distance.item())
+    plane_err = torch.linalg.norm(new_points - pts, dim=-1).mean()
 
-        sampled = pts[torch.randperm(pts.shape[0])[:1000]].clone()
-        mean = sampled.mean(dim=0, keepdim=True)
-        sampled = sampled - mean
-        scale = torch.norm(sampled, dim=1).max()
-        sampled = sampled / scale
-        sampled_input = sampled.unsqueeze(0).cpu()  # [1, 1000, 3]
-
-        # 2. 추론
-        with torch.no_grad():
-            pred_param = mlp_model(sampled_input).squeeze(0)
-        axis = pred_param[:3]
-        axis = axis / axis.norm()
-        distance = pred_param[3]
-
-        # 3. Project points
-        new_points = project_to_plane(pts, axis, distance.item())
-        plane_err = torch.linalg.norm(new_points - pts, dim=-1).mean()
-
-        # 4. surface sample
-        new_points = fitting.sample_plane(
-            distance.item(),
-            axis.data.cpu().numpy(),
-            mean=torch.mean(new_points, 0).data.cpu().numpy(),
-        )
-
-        recon_basic_shapes["plane_params"] = (
-            axis.data.cpu().numpy().tolist(),
-            distance.data.cpu().numpy().tolist(),
-        )
-        recon_basic_shapes["plane_new_points"] = new_points.tolist()
-        recon_basic_shapes["plane_err"] = plane_err.data.cpu().numpy().tolist()
-
-    else:
-        # 🔁 기존 방식
-        axis, distance = fitting.fit_plane_torch(
-            points=pts,
-            normals=None,
-            weights=torch.ones_like(pts)[:, :1],
-            ids=None,
-        )
-        new_points = project_to_plane(pts, axis, distance.item())
-        plane_err = torch.linalg.norm(new_points - pts, dim=-1).mean()
-
-        new_points = fitting.sample_plane(
-            distance.item(),
-            axis.data.cpu().numpy(),
-            mean=torch.mean(new_points, 0).data.cpu().numpy(),
-        )
-        recon_basic_shapes["plane_params"] = (
-            axis.data.cpu().numpy().tolist(),
-            distance.data.cpu().numpy().tolist(),
-        )
-        recon_basic_shapes["plane_new_points"] = new_points.tolist()
-        recon_basic_shapes["plane_err"] = plane_err.data.cpu().numpy().tolist()
+    new_points = fitting.sample_plane(
+        distance.item(),
+        axis.data.cpu().numpy(),
+        mean=torch.mean(new_points, 0).data.cpu().numpy(),
+    )
+    recon_basic_shapes["plane_params"] = (
+        axis.data.cpu().numpy().tolist(),
+        distance.data.cpu().numpy().tolist(),
+    )
+    recon_basic_shapes["plane_new_points"] = new_points.tolist()
+    recon_basic_shapes["plane_err"] = plane_err.data.cpu().numpy().tolist()
 
     # ======================fit a sphere======================
     center, radius = fitting.fit_sphere_torch(
@@ -271,6 +231,7 @@ def fit_basic_primitives(pts, use_learned_prior=False):
     )
     sphere_err = (torch.linalg.norm(pts - center, dim=-1) - radius).abs().mean()
 
+    # Project points on the surface
     new_points, new_normals = fitting.sample_sphere(
         radius.item(), center.data.cpu().numpy(), N=10000
     )
@@ -328,7 +289,6 @@ def fit_basic_primitives(pts, use_learned_prior=False):
         recon_basic_shapes["cone_err"] = cone_err.tolist()
 
     return recon_basic_shapes
-
 
 
 def fit_inrs(pts, cfg, device="cuda"):
@@ -886,3 +846,40 @@ def fit_err(model, points):
         x_hat, _ = model(points)
         err = torch.sqrt(((points - x_hat) ** 2).sum(-1)).mean()
     return err.item()
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--path_in', type=str, required=True, help="입력 ply 파일 경로")
+    parser.add_argument('--path_out', type=str, default=None, help="출력 json 파일 경로")
+    args = parser.parse_args()
+
+    ply_path = args.path_in
+    output_path = args.path_out or ply_path.replace(".ply", "_fitting_result.json")
+
+    # PLY 로드
+    import open3d as o3d
+    mesh = o3d.io.read_triangle_mesh(ply_path)
+    points = np.asarray(mesh.vertices)
+    labels = np.zeros(len(points)).astype(int)
+
+    # Config 생성
+    class DummyCfg:
+        validate_checkpoint_path = None
+        num_inr_fit_attempts = 1
+        seed = 42
+        silent = True
+
+    cfg = DummyCfg()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    # fitting
+    result = process_one_surface(0, points, labels, cfg, device)
+    if result is not None:
+        import json
+        with open(output_path, "w") as f:
+            json.dump(result["info"], f, indent=4)
+        print(f"저장 완료: {output_path}")
+    else:
+        print("fitting 실패 혹은 결과 없음")
