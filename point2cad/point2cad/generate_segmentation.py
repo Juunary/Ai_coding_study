@@ -49,6 +49,9 @@ if __name__ == "__main__":
     cfg = parser.parse_args()
 
     num_channels = 6 if cfg.with_normals else 3
+
+    # Load pretrained model
+    # Change the path to the model according to your setup
     pth_path = "./logs/pretrained_models/parsenet.pth" if cfg.with_normals else "./logs/pretrained_models/parsenet_no_normals.pth"
 
     # Loss = EmbeddingLoss(margin=1.0)
