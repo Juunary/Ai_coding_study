@@ -44,7 +44,7 @@ def find_corners(points, edge_idx):
         deviations.append((abs(angle - 90), idx))
     # 90도에 가장 가까운 4개 선택
     deviations.sort(key=lambda x: x[0])
-    selected = [idx for _, idx in deviations[:4]]
+    selected = [idx for _, idx in deviations[:8]]
     corner_idx = edge_idx[selected]
     return corner_idx, seq
 
