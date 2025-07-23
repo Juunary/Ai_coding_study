@@ -3,6 +3,8 @@ import argparse
 import math
 from scipy.spatial import ConvexHull
 import plotly.graph_objects as go
+import trimesh
+
 ##
 ##python .\wing_to_edge4.py --path_in ..\assets\xyz\panwing_gpu.xyz 4 --axis_offset 50 --axis_rotate_deg 90 --tilt_deg 40 
 ##
@@ -158,7 +160,11 @@ if __name__ == '__main__':
     parser.add_argument('--tilt_deg',        type=float, default=0.0,     help='판 기울기 각도(°)')
     args = parser.parse_args()
 
-    pts = np.loadtxt(args.path_in)
+    if args.path_in.endswith(".ply"):
+        mesh = trimesh.load(args.path_in)
+        pts = np.array(mesh.vertices)
+    else:
+        pts = np.loadtxt(args.path_in)
     if pts.ndim!=2 or pts.shape[1]<3:
         raise ValueError('Input must be N x >=3 array')
     pts = pts[:,:3]
