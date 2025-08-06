@@ -1,2 +1,0 @@
-data/cylinder_synthetic_3cls.xyzc
-data/cylinder_pred_3cls.xyzc
