@@ -3,6 +3,7 @@ import numpy as np
 import argparse
 
 def load_and_process_ply(path, scale=100.0, shift_x=0.0, rotate_deg_x=0.0):
+    # PLY 파일 로드 및 스케일, 이동, 회전 적용
     mesh = o3d.io.read_triangle_mesh(path)
     mesh.compute_vertex_normals()
     mesh.scale(scale, center=(0, 0, 0))
@@ -13,7 +14,8 @@ def load_and_process_ply(path, scale=100.0, shift_x=0.0, rotate_deg_x=0.0):
         mesh.rotate(R, center=(0, 0, 0))
     return mesh
 
-def compute_rmse_distance(mesh1, mesh2):
+def compute_rmse_distance(mesh1, mesh2):    
+    # 두 메쉬의 RMSE 거리 계산
     pcd1 = mesh1.sample_points_uniformly(number_of_points=10000)
     pcd2 = mesh2.sample_points_uniformly(number_of_points=10000)
 
@@ -24,6 +26,7 @@ def compute_rmse_distance(mesh1, mesh2):
     return rmse
 
 def compute_bounding_box_diff(mesh1, mesh2):
+    # 두 메쉬의 바운딩 박스 크기 차이 계산
     aabb1 = mesh1.get_axis_aligned_bounding_box()
     aabb2 = mesh2.get_axis_aligned_bounding_box()
 
@@ -34,6 +37,7 @@ def compute_bounding_box_diff(mesh1, mesh2):
     return size1, size2, diff
 
 def compute_geometric_accuracy(mesh1, mesh2):
+    # Chamfer, Hausdorff 거리 계산
     pcd1 = mesh1.sample_points_uniformly(number_of_points=10000)
     pcd2 = mesh2.sample_points_uniformly(number_of_points=10000)
 
@@ -46,6 +50,7 @@ def compute_geometric_accuracy(mesh1, mesh2):
     return chamfer, hausdorff
 
 def compute_surface_matching_accuracy(source_mesh, target_mesh):
+    # 표면 일치도(평균, 최대 오차) 계산
     pcd_source = source_mesh.sample_points_uniformly(number_of_points=10000)
     pcd_target = target_mesh.sample_points_uniformly(number_of_points=10000)
 
@@ -54,8 +59,8 @@ def compute_surface_matching_accuracy(source_mesh, target_mesh):
     max_error = np.max(dists)
     return mean_error, max_error
 
-
 def print_evaluation(area1, area2, rmse, bbox1, bbox2, bbox_diff, chamfer, hausdorff, mean_surface, max_surface):
+    # 평가 결과 출력
     print("\n===== 비교 결과 =====")
     print(f" 면적: Regenerated = {area1:.3f} mm² / Origin = {area2:.3f} mm²")
     print(f" 절대 위치 정확도 (RMSE): {rmse:.4f} mm")
@@ -78,6 +83,7 @@ def print_evaluation(area1, area2, rmse, bbox1, bbox2, bbox_diff, chamfer, hausd
     print(f"최대 오차: {max_surface:.4f} mm → {'o' if max_surface <= 0.1 else '❌'}")
 
 def main(path1, path2):
+    # 메인 함수: 파일 로드, 계산, 결과 출력
     mesh1 = load_and_process_ply(path1, scale=100.0, shift_x=6.95, rotate_deg_x=11.8)
     mesh2 = load_and_process_ply(path2, scale=100.0)
 
