@@ -127,7 +127,7 @@ def infer_impeller(xyz_path, model_path, device, out_dir=None):
         out_path = xyz_path.replace('.xyz', '_pred.xyzc')
     else:
         os.makedirs(out_dir, exist_ok=True)
-        fname = os.path.basename(xyz_path).replace('xyz_data_', 'shaft_').replace('.xyz', '.xyzc')
+        fname = os.path.basename(xyz_path).replace('xyz_data_', 'casing_').replace('.xyz', '.xyzc')
         out_path = os.path.join(out_dir, fname)
 
     np.savetxt(out_path, out, fmt='%.6f')

@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# python evaluate_casing_batch.py --path1 "../assets/ply/casing/ply_validation/casing.ply" \
-#   --path2 "../assets/ply/casing/ply_test" --start 1 --end 120 --pattern "mesh_casing_{:03d}.ply" \
-#   --scale 1 --log "evaluation_casing.log"
+# python '.\evaluate_casing_batch .py' --path1 "../assets/ply/casing/ply_validation/casing.ply"    --path2 "../assets/ply/casing/ply_test" --start 1 --end 120 --pattern "mesh_casing_{:03d}.ply"    --scale 1 --log "evaluation_casing.log"
 
 import os
 import argparse
@@ -142,7 +140,7 @@ def evaluate_pair(path1, path2, scale, shift_x, rot1, rot2,
     mean_surface_mm, max_surface_mm = compute_surface_matching_accuracy(
         mesh1, mesh2, n_points=geom_points, scale=scale
     )
-    # ▶ 변경: 축비율 기반 부피 오차율
+    
     vol_err = volume_error_percent_from_axes(mesh1, mesh2, scale=scale)
 
     return {
