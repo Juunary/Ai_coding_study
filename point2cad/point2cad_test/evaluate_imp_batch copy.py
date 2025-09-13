@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # 예)
-# python evaluate_imp_batch.py --path1 "/mnt/nas4/junewookang/point2cad/assets/impeller/ply_validation"   --path2 "./mnt/nas4/junewookang/point2cad/assets/impeller/ply_test"  --start 1 --end 120 --pattern "imp_{:03d}.ply"    --scale 1 --log "evaluation_imp2.log"
 # python evaluate_imp_batch.py   --path1 "/mnt/nas4/junewookang/point2cad/assets/impeller/ply_validation"   --path2 "/mnt/nas4/junewookang/point2cad/assets/impeller/ply_test"   --start 1 --end 120   --pattern "imp_{:03d}.ply"   --scale 1   --log "evaluation_imp2.log"
 import os
 import argparse
