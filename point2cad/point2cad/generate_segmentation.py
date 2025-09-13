@@ -93,6 +93,6 @@ if __name__ == "__main__":
     cluster_ids = cluster_ids.data.cpu().numpy()
 
     np.savetxt(
-        cfg.path_in.replace(".xyz", "_prediction.xyzc"),
+        cfg.path_in.replace(".xyz", ".xyzc"),
         np.hstack([points.detach().cpu().numpy()[0], cluster_ids[:, None]]),
     )

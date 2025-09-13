@@ -143,7 +143,8 @@ def get_graph_feature_with_normals(x, k1=20, k2=20, idx=None):
 class DGCNNEncoderGn(nn.Module):
     def __init__(self, mode=0, input_channels=3, nn_nb=80):
         super(DGCNNEncoderGn, self).__init__()
-        self.k = nn_nb
+        ##self.k = nn_nb
+        self.k = 20
         self.dilation_factor = 1
         self.mode = mode
         self.drop = 0.0

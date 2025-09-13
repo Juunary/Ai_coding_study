@@ -65,7 +65,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="PLY 파일 분석 & XYZ 변환 (GPU 가속, mm 단위)")
     parser.add_argument("input_ply", help="입력 PLY 또는 OBJ 파일 경로")
     parser.add_argument("output_xyz", nargs="?", default=None, help="출력할 .xyz 파일 경로 (생략 시 자동)")
-    parser.add_argument("-n", "--downsample", type=int, default=100000, help="포인트 샘플링 수 (기본: 10000)")
+    parser.add_argument("-n", "--downsample", type=int, default=10000, help="포인트 샘플링 수 (기본: 10000)")
     args = parser.parse_args()
 
     analyze_ply_gpu(args.input_ply, args.downsample, args.output_xyz)
