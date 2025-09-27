@@ -1,0 +1,18 @@
+
+solver:
+  seed: 123
+  iters: 40
+  lr: 0.01
+  snap_every: 10
+  relabel_every: 10
+  max_snap_edges: 5
+  device: "cpu"
+  weights:
+    w_G1: 1.0
+    w_G2: 0.2
+    w_coax: 0.5
+    w_ang: 0.2
+    w_gap: 50.0
+    w_self: 0.1
+    lambda_c: 1.0
+    lambda_r: 0.0001
