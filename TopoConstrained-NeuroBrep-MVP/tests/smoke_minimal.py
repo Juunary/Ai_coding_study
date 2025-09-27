@@ -1,3 +1,5 @@
+# cd C:\Users\user\Documents\GitHub\Ai_coding_study\TopoConstrained-NeuroBrep-MVP
+# python -m tests.smoke_minimal
 
 from __future__ import annotations
 import os, numpy as np, json, tempfile, torch

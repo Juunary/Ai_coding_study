@@ -1,4 +1,7 @@
-from __future__ import annotations
+# patch_solver_fix.py
+from pathlib import Path
+
+content = """from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, Tuple, Optional
 import torch, numpy as np, random
@@ -18,6 +21,7 @@ class SolveConfig:
     relabel_every: int = 10
     max_snap_edges: int = 5
     device: str = "cpu"
+    # Use default_factory to avoid mutable default instance problem
     weights: Weights = field(default_factory=Weights)
 
 def set_seed(seed:int):
@@ -25,11 +29,12 @@ def set_seed(seed:int):
     random.seed(seed); np.random.seed(seed); torch.manual_seed(seed)
 
 def prepare_samples(points: np.ndarray, labels: np.ndarray, types: np.ndarray, patches: Dict[int, object]) -> Dict[int, torch.Tensor]:
-    """Prepare per-patch samples for data term. For INR, also return off-surface samples."""
+    \"\"\"Prepare per-patch samples for data term. For INR, also return off-surface samples.\"\"\"
     samples = {}
     for k, p in patches.items():
         Pk = torch.from_numpy(points[labels==k].astype(np.float32))
-        if hasattr(p, "kind") and p.kind=="inr":
+        if hasattr(p, "kind") and p.kind==\"inr\":
+            # off-surface jitter
             noise = 0.01*torch.randn_like(Pk)
             samples[k] = (Pk, Pk + noise)
         else:
@@ -37,10 +42,6 @@ def prepare_samples(points: np.ndarray, labels: np.ndarray, types: np.ndarray, p
     return samples
 
 def solve(points: np.ndarray, labels: np.ndarray, types: np.ndarray, cfg: SolveConfig) -> Tuple[Dict[int,object], Graph, Dict[str,float]]:
-    # Ensure cfg.weights is a Weights instance (YAML/JSON will load to dict)
-    if isinstance(cfg.weights, dict):
-        cfg.weights = Weights(**cfg.weights)
-
     set_seed(cfg.seed)
 
     patches = initial_fit(points, labels, types)
@@ -51,6 +52,7 @@ def solve(points: np.ndarray, labels: np.ndarray, types: np.ndarray, cfg: SolveC
         for name, val in p.__dict__.items():
             if isinstance(val, torch.nn.Parameter):
                 opt_params.append(val)
+        # INR model parameters
         if hasattr(p, "model"):
             opt_params += list(p.model.parameters())
     optimizer = torch.optim.Adam(opt_params, lr=cfg.lr)
@@ -67,5 +69,11 @@ def solve(points: np.ndarray, labels: np.ndarray, types: np.ndarray, cfg: SolveC
         if it % cfg.relabel_every == 0:
             graph = annotate_edges(graph, patches)
         if it % 5 == 0 or it==1:
-            log.info(f"Iter {it:03d} :: " + ", ".join([f"{k}={v:.4f}" for k,v in scal.items()]))
+            log.info(f\"Iter {it:03d} :: \" + \", \".join([f\"{k}={v:.4f}\" for k,v in scal.items()]))
     return patches, graph, scal
+"""
+
+p = Path("topocn/optimize/solver.py")
+p.parent.mkdir(parents=True, exist_ok=True)
+p.write_text(content, encoding="utf-8")
+print("Patched", p.resolve())

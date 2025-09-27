@@ -79,9 +79,27 @@ def E_ang(i_patch, j_patch) -> Tensor:
     ui = ui / (ui.norm()+1e-12); uj = uj / (uj.norm()+1e-12)
     return 1.0 - (ui @ uj).abs()
 
-def E_gap(pi: Tensor, pj: Tensor, eps: float=1e-3) -> Tensor:
-    d = (pi - pj).norm(dim=1) - eps
+def E_gap(pi: Tensor, pj: Tensor, i_patch=None, j_patch=None, eps: float=1e-3) -> Tensor:
+    """
+    Gap computed after projecting boundary samples onto current patch surfaces.
+    If i_patch/j_patch provided and have `project`, use projected points; else fallback to raw pi/pj.
+    Returns squared-clamped mean of distances (soft gap penalty).
+    """
+    # try to project sample pairs to current patch geometry (so gap depends on params)
+    if i_patch is not None and j_patch is not None and hasattr(i_patch, "project") and hasattr(j_patch, "project"):
+        try:
+            Xi = i_patch.project(pi)
+            Yj = j_patch.project(pj)
+        except Exception:
+            Xi = pi
+            Yj = pj
+    else:
+        Xi = pi
+        Yj = pj
+
+    d = (Xi - Yj).norm(dim=1) - eps
     return torch.clamp(d, min=0.0).pow(2).mean()
+
 
 def E_self(X: Tensor, Y: Tensor, tau: float=1e-3) -> Tensor:
     d = torch.cdist(X, Y)
@@ -118,7 +136,7 @@ def total_energy(graph: Graph, patches: Dict[int, object], samples: Dict[int, Te
         EG2 = EG2 + E_G2(patches[i], patches[j], pi, pj)
         Ecoax = Ecoax + E_coax(patches[i], patches[j], pi, pj)
         Eang = Eang + E_ang(patches[i], patches[j])
-        Egap = Egap + E_gap(pi, pj, eps=1e-3)
+        Egap = Egap + E_gap(pi, pj, i_patch=patches[i], j_patch=patches[j], eps=1e-3)
         # self-intersections among this pair (sampled)
         X = patches[i].project(pi) if hasattr(patches[i], "project") else pi
         Y = patches[j].project(pj) if hasattr(patches[j], "project") else pj

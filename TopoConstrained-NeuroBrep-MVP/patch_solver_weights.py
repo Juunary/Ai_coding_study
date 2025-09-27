@@ -1,4 +1,7 @@
-from __future__ import annotations
+# patch_solver_weights.py
+from pathlib import Path
+
+content = """from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, Tuple, Optional
 import torch, numpy as np, random
@@ -25,11 +28,11 @@ def set_seed(seed:int):
     random.seed(seed); np.random.seed(seed); torch.manual_seed(seed)
 
 def prepare_samples(points: np.ndarray, labels: np.ndarray, types: np.ndarray, patches: Dict[int, object]) -> Dict[int, torch.Tensor]:
-    """Prepare per-patch samples for data term. For INR, also return off-surface samples."""
+    \"\"\"Prepare per-patch samples for data term. For INR, also return off-surface samples.\"\"\"
     samples = {}
     for k, p in patches.items():
         Pk = torch.from_numpy(points[labels==k].astype(np.float32))
-        if hasattr(p, "kind") and p.kind=="inr":
+        if hasattr(p, "kind") and p.kind==\"inr\":
             noise = 0.01*torch.randn_like(Pk)
             samples[k] = (Pk, Pk + noise)
         else:
@@ -67,5 +70,10 @@ def solve(points: np.ndarray, labels: np.ndarray, types: np.ndarray, cfg: SolveC
         if it % cfg.relabel_every == 0:
             graph = annotate_edges(graph, patches)
         if it % 5 == 0 or it==1:
-            log.info(f"Iter {it:03d} :: " + ", ".join([f"{k}={v:.4f}" for k,v in scal.items()]))
+            log.info(f\"Iter {it:03d} :: \" + \", \".join([f\"{k}={v:.4f}\" for k,v in scal.items()]))
     return patches, graph, scal
+"""
+
+p = Path("topocn/optimize/solver.py")
+p.write_text(content, encoding="utf-8")
+print("Patched", p.resolve())
