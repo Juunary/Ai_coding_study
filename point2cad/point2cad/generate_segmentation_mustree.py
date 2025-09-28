@@ -53,7 +53,7 @@ def train_impeller(xyzc_path, model_out, lr, stop_loss, device, sample_size):
     steps_per_epoch = max(1, N // sample_size)
 
     model.train()
-    for epoch in range(1, 201):
+    for epoch in range(1, 1001):
         cycle_loss = 0.0
         for _ in range(steps_per_epoch):
             idx = np.random.choice(N, sample_size, replace=False)
@@ -68,7 +68,7 @@ def train_impeller(xyzc_path, model_out, lr, stop_loss, device, sample_size):
             cycle_loss += loss.item()
         avg_loss = cycle_loss / steps_per_epoch
         scheduler.step()
-        print(f"Epoch {epoch}/200  BatchLoss: {avg_loss:.6f}")
+        print(f"Epoch {epoch}/1000  BatchLoss: {avg_loss:.6f}")
 
         # full dataset evaluation
         if epoch % 10 == 0:
