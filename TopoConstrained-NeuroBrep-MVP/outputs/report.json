@@ -1,16 +1,19 @@
-[topocn][19:20:23] Initial patches: 6
-[topocn][19:20:32] Iter 001 :: Edata=14.8638, EG1=3.0493, EG2=0.0016, Ecoax=0.0000, Eang=0.0000, Egap=28.3825, Eself=0.0155, Ereg=0.0016, Etotal=301.7398
-[topocn][19:20:34] Iter 005 :: Edata=14.7408, EG1=2.0364, EG2=0.0016, Ecoax=0.0000, Eang=0.0000, Egap=28.3825, Eself=0.0154, Ereg=0.0016, Etotal=300.6039
-[topocn][19:20:37] Iter 010 :: Edata=14.6618, EG1=0.6198, EG2=0.0016, Ecoax=0.0000, Eang=0.0000, Egap=28.3825, Eself=0.0151, Ereg=0.0016, Etotal=299.1082
-[topocn][19:20:41] Iter 015 :: Edata=14.5102, EG1=0.6204, EG2=0.0016, Ecoax=0.0000, Eang=0.0000, Egap=28.3825, Eself=0.0150, Ereg=0.0021, Etotal=298.9572
-[topocn][19:20:44] Iter 020 :: Edata=14.5121, EG1=0.3851, EG2=0.0016, Ecoax=0.0000, Eang=0.0000, Egap=28.3825, Eself=0.0146, Ereg=0.0029, Etotal=298.7238
-[topocn][19:20:47] Iter 025 :: Edata=14.4340, EG1=0.2938, EG2=0.0016, Ecoax=0.0000, Eang=0.0000, Egap=28.3825, Eself=0.0136, Ereg=0.0039, Etotal=298.5542
-[topocn][19:20:50] Iter 030 :: Edata=14.3886, EG1=0.2451, EG2=0.0016, Ecoax=0.0000, Eang=0.0000, Egap=28.3825, Eself=0.0124, Ereg=0.0056, Etotal=298.4601
-[topocn][19:20:54] Iter 035 :: Edata=14.3754, EG1=0.2373, EG2=0.0016, Ecoax=0.0000, Eang=0.0000, Egap=28.3825, Eself=0.0115, Ereg=0.0078, Etotal=298.4391
-[topocn][19:20:57] Iter 040 :: Edata=14.3428, EG1=0.2086, EG2=0.0016, Ecoax=0.0000, Eang=0.0000, Egap=28.3825, Eself=0.0112, Ereg=0.0102, Etotal=298.3776
-[topocn][19:21:00] Iter 045 :: Edata=14.3366, EG1=0.1895, EG2=0.0016, Ecoax=0.0000, Eang=0.0000, Egap=28.3825, Eself=0.0112, Ereg=0.0125, Etotal=298.3524
-[topocn][19:21:03] Iter 050 :: Edata=14.3073, EG1=0.1941, EG2=0.0015, Ecoax=0.0000, Eang=0.0000, Egap=28.3825, Eself=0.0112, Ereg=0.0141, Etotal=298.3276
-[topocn][19:21:07] Iter 055 :: Edata=14.3027, EG1=0.2007, EG2=0.0015, Ecoax=0.0000, Eang=0.0000, Egap=28.3825, Eself=0.0114, Ereg=0.0152, Etotal=298.3297
-[topocn][19:21:10] Iter 060 :: Edata=14.2825, EG1=0.2486, EG2=0.0015, Ecoax=0.0000, Eang=0.0000, Egap=28.3825, Eself=0.0115, Ereg=0.0158, Etotal=298.3574
-[export] pythonocc-core not available or failed to import: No module named 'OCC'
-[topocn][19:26:21] Report: {'E': {'Edata': 14.282502174377441, 'EG1': 0.2486237734556198, 'EG2': 0.0015452316729351878, 'Ecoax': 0.0, 'Eang': 0.0, 'Egap': 28.382482528686523, 'Eself': 0.011458886787295341, 'Ereg': 0.015812398865818977, 'Etotal': 298.357421875}, 'G1_discont': 5, 'GAP_violations': 5975, 'SELF_soft': 0.0, 'STEP_success': False, 'Chamfer': 3.1953372955322266, 'Hausdorff': 36.85544967651367}
+{
+  "E": {
+    "Edata": 14.282502174377441,
+    "EG1": 0.2486237734556198,
+    "EG2": 0.0015452316729351878,
+    "Ecoax": 0.0,
+    "Eang": 0.0,
+    "Egap": 28.382482528686523,
+    "Eself": 0.011458886787295341,
+    "Ereg": 0.015812398865818977,
+    "Etotal": 298.357421875
+  },
+  "G1_discont": 5,
+  "GAP_violations": 5975,
+  "SELF_soft": 0.0,
+  "STEP_success": false,
+  "Chamfer": 3.1953372955322266,
+  "Hausdorff": 36.85544967651367
+}
