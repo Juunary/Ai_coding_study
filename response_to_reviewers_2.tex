@@ -1,0 +1,391 @@
+\documentclass[11pt]{article}
+\usepackage[margin=2.54cm]{geometry}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+% IEEE Access template fields
+\newcommand{\concern}[2]{\noindent\textbf{Reviewer~#1, Concern~\##2}\par}
+\newcommand{\concerntext}[1]{\noindent\textit{#1}\par\medskip}
+\newcommand{\authorresponse}[1]{\noindent\textbf{Author response:} #1\par\medskip}
+\newcommand{\authoraction}[1]{\noindent\textbf{Author action:} We updated the manuscript by #1\par\bigskip\noindent\rule{\linewidth}{0.4pt}\par\medskip}
+
+\begin{document}
+
+% ---------------------------------------------------------------
+% Cover letter (IEEE Access template header)
+% ---------------------------------------------------------------
+\noindent\textbf{Original Manuscript ID:} Access-2025-52745\\
+\textbf{Original Article Title:} Topology-Constrained NeuroB-Rep:
+Contact-Aware CAD Reconstruction from 3-D Point Clouds
+
+\bigskip
+\noindent To: IEEE Access Editor\\
+Re: Response to Reviewers
+
+\medskip
+\noindent Dear Editor,
+
+Thank you for allowing a resubmission of our manuscript, with an opportunity
+to address the reviewers' comments.
+We are uploading (a) our point-by-point response to the comments (below),
+(b) an updated manuscript with yellow highlighting indicating changes
+(as ``Highlighted PDF''), and (c) a clean updated manuscript without
+highlights (``Main Manuscript'').
+
+Best regards,\\
+J.~W. Kang et al.
+
+\bigskip\noindent\rule{\linewidth}{0.8pt}\bigskip
+
+% ===============================================================
+\section*{Reviewer 1}
+% ===============================================================
+
+% ---- R1-M1 ----
+\concern{1}{1 (Clarity of Contribution vs.\ Point2CAD)}
+\concerntext{The distinction between the proposed method and Point2CAD is not
+sufficiently clear. A side-by-side comparison table or flowchart would
+help readers understand the novelty.}
+\authorresponse{We have added Table~2 (Pipeline Comparison), which contrasts
+NeuroB-Rep and Point2CAD across seven design dimensions (topology
+handling, contact objective, gating schedule, continuity enforcement,
+freeform surfaces, export format, and evaluation protocol).
+The Introduction (Sec.~I) has been restructured so that the
+industrial motivation paragraph precedes the contribution list,
+making the positioning against Point2CAD explicit from the outset.}
+\authoraction{adding Table~2 in Sec.~IV and restructuring the Introduction
+(Sec.~I, paragraphs 3--5).}
+
+% ---- R1-M2 ----
+\concern{1}{2 (Evaluation Protocol Consistency)}
+\concerntext{The evaluation protocol mixes different scales and metrics.
+A rationale for this hybrid approach is needed.}
+\authorresponse{We have added a dedicated ``Rationale for Hybrid Evaluation''
+paragraph in Sec.~V-B explaining why contact-gap energies are
+evaluated in a normalized scale while geometric distances are reported
+in millimeters: contact tolerances are scale-invariant design intents,
+whereas Chamfer/Hausdorff must be in physical units to be
+interpretable by manufacturing engineers. We also clarify the
+ICP alignment step and its role in bridging the two scales.}
+\authoraction{adding a new paragraph ``Rationale for Hybrid Evaluation''
+in Sec.~V-B.}
+
+% ---- R1-M3 ----
+\concern{1}{3 (Missing Baseline Comparison)}
+\concerntext{Table~3 reports only your method. At least one baseline (e.g.,
+Point2CAD) should be included under the same protocol.}
+\authorresponse{Table~7 (Geometry Consistency after ICP) now includes a
+Point2CAD column. We ran Point2CAD on the same three components
+(Impeller, Shaft, Casing) under the identical ICP protocol
+with 120 independent repeats per component.
+NeuroB-Rep consistently outperforms Point2CAD: geometric accuracy
+and surface coincidence errors are 2--3$\times$ lower, while length
+errors show 4--8$\times$ improvement.
+(Note: The original Table~3 is now Table~7 due to newly added tables.)}
+\authoraction{extending Table~7 with a Point2CAD column (Sec.~VI-G).}
+
+% ---- R1-M4 ----
+\concern{1}{4 (Failure Cases)}
+\concerntext{The paper does not discuss failure modes. Please analyze cases
+where the method does not perform well.}
+\authorresponse{We have added Sec.~VIII-E ``Failure Modes and Mitigations''
+analyzing the cross-boundary misassignment observed in
+Figs.~5--6. The primary failure originates in the upstream
+PointNet segmentation stage when geometrically similar adjacent
+surfaces receive the same label. We describe the downstream
+effects (degraded data-term fit, missing contact edges) and
+propose three mitigations: adaptive layer thresholds,
+boundary-aware resampling, and multi-scale segmentation.}
+\authoraction{adding Sec.~VIII-E with failure analysis and three mitigation
+strategies.}
+
+% ---- R1-m1 ----
+\concern{1}{5 (Abstract Wording)}
+\concerntext{``0.01\,mm'' in the abstract should reflect the range across
+components.}
+\authorresponse{The value has been changed to ``0.01--0.03\,mm'' to reflect
+the range across the three components (Impeller, Shaft, Casing).}
+\authoraction{updating the abstract and Sec.~VI with the correct range.}
+
+% ---- R1-m2 ----
+\concern{1}{6 (Formula Notation)}
+\concerntext{The relationship between $d_{ij,k}$ and $s_{ij,k}$ after Eq.~(2)
+is unclear.}
+\authorresponse{We added a clarifying sentence after Eq.~(2) linking
+$d_{ij,k}$ (gap distance) and $s_{ij,k}$ (projected overlap
+distance) and explaining their complementary roles in the
+contact objective.}
+\authoraction{adding a clarifying sentence after Eq.~(2) in Sec.~IV-B.}
+
+% ---- R1-m3 ----
+\concern{1}{7 (Figure Reference Order)}
+\concerntext{Figures are not referenced in sequential order.}
+\authorresponse{All figure references have been checked and corrected to
+follow sequential order throughout the manuscript.}
+\authoraction{correcting all figure cross-references throughout the manuscript.}
+
+\bigskip\noindent\rule{\linewidth}{0.8pt}\bigskip
+
+% ===============================================================
+\section*{Reviewer 2}
+% ===============================================================
+
+% ---- R2-C1 ----
+\concern{2}{1 (Comparison with Six Cited Methods)}
+\concerntext{The paper should compare with Li et al.\ 2019,
+ComplexGen, PrimitiveNet, Supervised Fitting, ParSeNet,
+and BrepGen, not just cite them.}
+\authorresponse{We provide two levels of comparison.
+(1)~Table~1 (Feature Comparison) gives a qualitative
+comparison across all surveyed methods on seven capability
+axes (topology support, freeform surfaces, STEP export, etc.).
+(2)~Table~7 provides a full quantitative comparison with
+Point2CAD under identical protocol.
+A new Sec.~VIII-B (``Scope of Baseline Comparisons'')
+explains why the remaining five methods---Li et al.\ 2019~\cite{b27}
+(Supervised Fitting), PrimitiveNet~\cite{b28}, ParSeNet~\cite{b19},
+ComplexGen~\cite{b1}, and BrepGen~\cite{b4}---cannot be
+compared numerically: dataset mismatch (ABC/ShapeNet/synthetic
+vs.\ industrial scans), output-format disparity (chain complexes,
+latent codes vs.\ STEP), and evaluation-metric incompatibility
+(IoU/F-score vs.\ mm-locked Chamfer/Hausdorff + contact-gap).
+Point2CAD is the only candidate sharing the same pipeline
+architecture, publicly available code, and compatible input format.}
+\authoraction{adding Table~1 (Sec.~III), extending Table~7 (Sec.~VI-G),
+and adding Sec.~VIII-B explaining the scope of baseline comparisons.}
+
+% ---- R2-C2 ----
+\concern{2}{2 (Paper Outline Missing)}
+\concerntext{Add a paper outline at the end of the Introduction.}
+\authorresponse{A paper-outline paragraph has been added at the end of Sec.~I,
+listing all sections and their content.}
+\authoraction{adding an outline paragraph at the end of Sec.~I.}
+
+% ---- R2-C3 ----
+\concern{2}{3 (Motivation Paragraph Position)}
+\concerntext{The industrial motivation should appear before the contribution
+list, not after.}
+\authorresponse{The motivation paragraph has been moved to precede the
+contribution list in Sec.~I.}
+\authoraction{reordering the motivation and contribution paragraphs in Sec.~I.}
+
+% ---- R2-C4/C5 ----
+\concern{2}{4 \& 5 (Related Work Structure and Depth)}
+\concerntext{The Related Work section has a single subsection and lacks
+detailed positioning against existing methods.}
+\authorresponse{Sec.~III (Related Work) has been restructured into four
+subsections: (A)~Point-Cloud Segmentation,
+(B)~Primitive Fitting and Assembly, (C)~B-Rep Learning and
+Generative Models, and (D)~Hybrid Reconstruction and Point2CAD.
+Each subsection discusses the strengths and limitations of prior
+methods and explicitly positions our approach.
+Table~1 provides a structured feature comparison.
+New references have been added: Li et al.\ 2019, PrimitiveNet
+(Huang 2021), Maurell et al.\ 2024.}
+\authoraction{restructuring Sec.~III into four subsections and adding Table~1.}
+
+% ---- R2-C6 ----
+\concern{2}{6 (Face/Edge/Vertex Recovery from Points)}
+\concerntext{How are faces, edges, and vertices recovered from the
+unstructured point cloud?}
+\authorresponse{Sec.~IV-A now includes a dedicated subsubsection
+(``From Points to a Patch Graph,'' Sec.~IV-A-2) explaining the kNN
+co-label adjacency mechanism: for each point, the $k$~nearest
+neighbors are queried; if a neighbor carries a different patch label,
+an edge is recorded between the two patches. This yields the face
+adjacency graph whose edges define candidate contact boundaries.}
+\authoraction{adding subsubsection Sec.~IV-A-2 (``From Points to a Patch Graph'').}
+
+% ---- R2-C7 ----
+\concern{2}{7 (Single Subsection in Method)}
+\concerntext{Section~III-A contains only one subsection, which violates
+standard structuring conventions.}
+\authorresponse{A second subsubsection has been added to Sec.~IV-A,
+resolving the single-subsection issue.
+Sec.~IV-A now contains two subsubsections:
+IV-A-1 (Hybrid Fitting with INRs and Primitives) and
+IV-A-2 (From Points to a Patch Graph).}
+\authoraction{adding subsubsection IV-A-2 to Sec.~IV-A.}
+
+% ---- R2-C8 ----
+\concern{2}{8 (Jang et al.\ Explanation)}
+\concerntext{The description of Jang et al.\ [12] is too brief.
+Expand the explanation of the mesh repair principles.}
+\authorresponse{Sec.~II-C now provides a three-step description of Jang et
+al.'s method: (i)~detection of interpenetrating triangles via
+oriented bounding-box pre-filtering, (ii)~computation of exact
+intersection curves between conflicting triangles, and
+(iii)~local re-meshing by splitting edges along intersection
+curves and re-triangulating the affected patches. The method
+operates in a single pass without global re-meshing, making it
+suitable as an online diagnostic.}
+\authoraction{expanding Sec.~II-C from one sentence to a full paragraph.}
+
+% ---- R2-C9 ----
+\concern{2}{9 (Projection Operator Clarity)}
+\concerntext{The passage describing the projection operator is hard to follow.}
+\authorresponse{The projection operator description has been rewritten for
+clarity, with explicit notation for the nearest-point projection
+onto each parametric surface and the role of the projection in
+computing gap distances.}
+\authoraction{rewriting the projection operator passage in Sec.~IV-B.}
+
+% ---- R2-C10 ----
+\concern{2}{10 (``Soft Barrier'' Definition)}
+\concerntext{Define ``soft barrier'' at first use.}
+\authorresponse{The term is now defined in Sec.~II-C (Preliminaries) at its
+first occurrence: ``a smooth penalty function
+$\log(1+\exp(\tau-s))$ that grows rapidly as the distance~$s$
+between projected points on two patches decreases below
+threshold~$\tau$.''}
+\authoraction{adding the definition of ``soft barrier'' at first use in Sec.~II-C.}
+
+% ---- R2-C11 ----
+\concern{2}{11 (Inconsistent Paragraph Labels)}
+\concerntext{The ``a:'' style paragraph labels are inconsistent.}
+\authorresponse{All paragraph labels have been unified using the standard
+\texttt{\textbackslash paragraph\{\}} command throughout the manuscript.}
+\authoraction{standardizing all paragraph labels throughout the manuscript.}
+
+% ---- R2-C12 ----
+\concern{2}{12 (Fig.~3 Panel Count)}
+\concerntext{The caption references panels (a,b,c,d) but only three
+panels are visible.}
+\authorresponse{This was a caption error. The original figure has always
+contained three panels. The caption has been corrected to
+reference (a), (b), and (c) only.}
+\authoraction{correcting the Fig.~3 caption to reference three panels.}
+
+% ---- R2-C13 ----
+\concern{2}{13 (PCA Normalization Justification)}
+\concerntext{The PCA canonical transform is used without justification.
+An ablation would strengthen the claim.}
+\authorresponse{We conducted a PCA ablation experiment (5~seeds, 60~iterations
+each) comparing convergence with and without PCA normalization.
+Results are reported in Table~6 (Sec.~VI-B). PCA normalization
+yields a modest but consistent improvement: Chamfer distance
+improves by 0.3\% and Hausdorff by 1.4\%, with lower variance
+across seeds. The primary benefit is stabilizing the initial
+fit and reducing sensitivity to scan orientation.}
+\authoraction{adding Table~6 and Sec.~VI-B (``Effect of PCA Canonical Transform'').}
+
+% ---- R2-C14 ----
+\concern{2}{14 (ISO~5459 Datum Explanation)}
+\concerntext{The reference to ISO~5459 needs more context.}
+\authorresponse{Sec.~V-A now includes an expanded explanation of the
+ISO~5459 datum framework: how datum features are established
+from physical surfaces, and how this relates to our
+evaluation's reference geometry and coordinate alignment via ICP.}
+\authoraction{expanding the ISO~5459 explanation in Sec.~V-A.}
+
+% ---- R2-C15 ----
+\concern{2}{15 (GPU Implementation Details)}
+\concerntext{No information is provided about the GPU implementation.}
+\authorresponse{We have added implementation details in Sec.~V-E
+(Computational Cost) and Table~4: all optimizations run on a
+single NVIDIA RTX~3090 using PyTorch autograd with CUDA-batched
+energy evaluations. NeuroB-Rep requires ${\sim}7$\,min / 4.8\,GB
+per component vs.\ Point2CAD's ${\sim}4$\,min / 3.2\,GB.
+The overhead stems from the contact-gap and continuity terms,
+which require pairwise boundary-point queries absent in
+Point2CAD's distance-only objective.}
+\authoraction{adding Sec.~V-E (Computational Cost) and Table~4.}
+
+% ---- R2-C16 ----
+\concern{2}{16 (Artifact URL)}
+\concerntext{Provide a public artifact URL for reproducibility.}
+\authorresponse{Due to corporate confidentiality and intellectual property
+constraints on the core solver algorithms and the raw industrial scan data,
+we cannot publicly release the full optimization codebase.
+To support independent reproducibility of our reported results, we have
+prepared a public artifact at
+\url{https://github.com/Juunary/TopoConstrained-NeuroBrep}
+containing three items:
+(1)~\textbf{Evaluation scripts.}
+A standalone Python script (\texttt{eval/evaluate.py}) that computes
+Chamfer distance, Hausdorff distance, and Surface Coincidence from any pair
+of input meshes, following the protocol of Table~7 (Sec.~V-B).
+Dependencies are limited to \texttt{numpy}, \texttt{trimesh}, and
+\texttt{scipy}; no proprietary packages are required.
+(2)~\textbf{Default configuration file.}
+\texttt{configs/default.yaml} lists every hyperparameter reported in
+Table~3 (solver iterations, learning rate, gate schedule, loss weights,
+etc.), allowing readers to verify all experimental conditions without
+access to the solver code itself.
+(3)~\textbf{Representative output meshes.}
+Final reconstructed PLY files for the Impeller component (NeuroB-Rep
+and Point2CAD), together with the reference mesh and a CSV summary of
+the Table~7 values, enabling end-to-end metric verification on the
+provided sample.}
+\authoraction{adding the artifact URL and a structured description of its
+contents in Sec.~VII (Reproducibility and Artifact), and releasing
+\texttt{configs/default.yaml} to make all reported hyperparameters
+independently verifiable.}
+
+% ---- R2-C17 ----
+\concern{2}{17 (Table~3 Baseline Column)}
+\concerntext{Table~3 should include at least one baseline for comparison.}
+\authorresponse{The consistency table (now Table~7 in the revised manuscript)
+now includes a Point2CAD column evaluated under the identical ICP
+protocol (120 repeats per component). See Concern~\#3 of Reviewer~1 above.}
+\authoraction{adding a Point2CAD column to Table~7 (Sec.~VI-G).}
+
+% ---- R2-C18 ----
+\concern{2}{18 (``Reproducibility Hygiene'' Wording)}
+\concerntext{The term ``reproducibility hygiene'' is informal.}
+\authorresponse{The term has been replaced with ``reproducibility protocol''
+throughout the manuscript.}
+\authoraction{replacing ``reproducibility hygiene'' with ``reproducibility protocol''
+throughout Sec.~VII.}
+
+\bigskip\noindent\rule{\linewidth}{0.8pt}\bigskip
+
+% ===============================================================
+\section*{Additional Corrections (author-initiated)}
+% ===============================================================
+
+During revision, we identified and corrected the following issues
+independently of the reviewer comments:
+
+\begin{enumerate}[leftmargin=*, label=\textbf{\arabic*.}]
+  \item \textbf{Evaluation repeat count (1{,}000 $\rightarrow$ 120):}
+        To ensure a strictly fair, apples-to-apples comparison with the 
+        newly added Point2CAD baseline, we re-evaluated both methods under 
+        the exact same protocol. Consequently, the evaluation was standardized 
+        to 120 independent repeats per component (rather than the 1,000 repeats 
+        initially reported for our method alone). The text and Table~7 caption 
+        have been updated to reflect this standardized protocol.
+
+  \item \textbf{Fig.~3 caption (4 panels $\rightarrow$ 3 panels).}
+        The figure has always contained three panels; the caption
+        erroneously referenced four panels (a,b,c,d).
+        Corrected to panels (a), (b), (c).
+
+  \item \textbf{Abstract grammar.}
+        ``a based on temperature gating mechanism'' corrected to
+        ``a temperature-based gating mechanism.''
+
+  \item \textbf{Computational cost reporting (Table~4).}
+        Added Table~4 (Sec.~V-E) reporting training time, GPU memory,
+        and per-component overhead for both NeuroB-Rep and Point2CAD
+        on an NVIDIA RTX~3090.
+
+  \item \textbf{New Acknowledgment section.}
+        Added NRF funding acknowledgment before the References,
+        per IEEE Access policy.
+
+  \item \textbf{Section and table renumbering.}
+        A new Sec.~II (Preliminaries) was inserted and four new tables
+        (Tables~1, 2, 4, 6) were added, causing all subsequent section
+        and table numbers to shift.
+        All cross-references in the revised manuscript have been updated
+        accordingly.
+\end{enumerate}
+
+\bigskip
+\noindent We believe these revisions comprehensively address all reviewer
+concerns. We are grateful for the opportunity to strengthen the manuscript
+and welcome any further suggestions.
+
+\end{document}
